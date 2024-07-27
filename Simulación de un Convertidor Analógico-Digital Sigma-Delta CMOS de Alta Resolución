@@ -1,0 +1,38 @@
+% Parámetros de simulación
+fs = 1000; % Frecuencia de muestreo (Hz)
+f_signal = 5; % Frecuencia de la señal de entrada (Hz)
+T = 1/fs; % Periodo de muestreo
+t = 0:T:1; % Vector de tiempo
+
+% Señal de entrada (senoidal)
+input_signal = 0.5 * sin(2 * pi * f_signal * t); 
+
+% Inicialización del convertidor sigma-delta
+N = length(input_signal); % Número de muestras
+output_signal = zeros(1, N); % Vector de salida
+integrator = 0; % Integrador
+
+% Bucle de simulación
+for n = 1:N
+    integrator = integrator + input_signal(n); % Integración de la señal
+    if integrator > 0 % Comparador
+        output_signal(n) = 1; % Salida digital alta
+        integrator = integrator - 1; % Retroalimentación
+    else
+        output_signal(n) = 0; % Salida digital baja
+    end
+end
+
+% Gráficos
+figure;
+subplot(2,1,1);
+plot(t, input_signal);
+title('Señal de Entrada');
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+
+subplot(2,1,2);
+stairs(t, output_signal);
+title('Salida del Convertidor Sigma-Delta');
+xlabel('Tiempo (s)');
+ylabel('Salida Digital');
